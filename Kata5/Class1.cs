@@ -3,28 +3,21 @@ using System.IO;
 
 namespace Kata5
 {
-    public delegate void WriteEventHandler(object sender, WriteEventArgs args);
-
-    public class WriteEventArgs
+    public class WriteEventArgs : EventArgs
     {
-        private readonly String _text;
-
         public WriteEventArgs(string text)
         {
-            _text = text;
+            Text = text;
         }
 
-        public string GetText()
-        {
-            return _text.Clone().ToString();
-        }
+        public string Text { get; private set; }
     }
 
     public sealed class Publisher: IPublisher
     {
         private readonly TextReader _textReader;
 
-        public event WriteEventHandler WriteEvent;
+        public event EventHandler<WriteEventArgs> WriteEvent;
 
         
 
@@ -33,7 +26,7 @@ namespace Kata5
             _textReader = textReader;
         }
 
-        private void RaiceWriteEvent(WriteEventArgs eventArgs)
+        private void RaiseWriteEvent(WriteEventArgs eventArgs)
         {
             if (WriteEvent!=null)
             {
@@ -48,7 +41,7 @@ namespace Kata5
             {
                 if (!String.IsNullOrEmpty(s))
                 {
-                    RaiceWriteEvent(new WriteEventArgs(s));
+                    RaiseWriteEvent(new WriteEventArgs(s));
                 }
             }
         }
@@ -68,7 +61,7 @@ namespace Kata5
 
         private void HandleWriteEvent(object sender, WriteEventArgs eventArgs)
         {
-            WriteText(eventArgs.GetText());
+            WriteText(eventArgs.Text);
         }
 
         private void WriteText(string s)
