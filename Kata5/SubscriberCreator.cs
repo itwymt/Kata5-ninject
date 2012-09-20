@@ -1,5 +1,6 @@
 ﻿#region Using 
 
+using System;
 using System.IO;
 
 #endregion
@@ -17,6 +18,10 @@ namespace Kata5
         private readonly IPublisher _publisher;
         public SubscriberCreator(IPublisher publisher)
         {
+            if (publisher==null)
+            {
+                throw new NullReferenceException("Publisher should not be null");
+            }
             _publisher = publisher;
         }
 

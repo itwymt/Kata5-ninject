@@ -12,6 +12,18 @@ namespace Kata5
         private readonly TextReader _textReader;
         public CommandProcessor(IPublisher publisher, ISubscriberCreator subscriberCreator, TextReader textReader)
         {
+            if (publisher == null)
+            {
+                throw new NullReferenceException("Publisher should not be null");
+            }
+            if (subscriberCreator == null)
+            {
+                throw new NullReferenceException("Subscriber creator should not be null");
+            }
+            if (textReader == null)
+            {
+                throw new NullReferenceException("Text reader should not be null");
+            }
             _publisher = publisher;
             _subscriberCreator = subscriberCreator;
             _textReader = textReader;
@@ -21,7 +33,7 @@ namespace Kata5
             string s;
             while ((s = _textReader.ReadLine()) != null)
             {
-                if (s == "add")
+                if (s.ToLower() == "add")
                 {
                     _subscriberCreator.CreateSubscriber(Console.Out);
                 }
