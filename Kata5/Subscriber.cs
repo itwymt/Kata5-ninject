@@ -8,6 +8,7 @@ using System.IO;
 
 namespace Kata5
 {
+
     public class Subscriber
     {
         private readonly TextWriter _textWriter;
@@ -26,7 +27,7 @@ namespace Kata5
 
             _textWriter = textWriter;
 
-             publisher.WriteEvent += HandleWriteEvent;
+            publisher.WriteEvent += HandleWriteEvent;
         }
 
         private void HandleWriteEvent(object sender, WriteEventArgs eventArgs)

@@ -63,9 +63,10 @@ namespace Kata5
             var publisher = Substitute.For<IPublisher>();
             var sc = Substitute.For<ISubscriberCreator>();
             var st = new StringReader("add");
-            var cp = new CommandProcessor(publisher,sc,st);
+            var cp = new CommandProcessor(publisher,sc);
+            cp.TextReader = st;
             cp.SubscribeAndReadText();
-            sc.Received().CreateSubscriber(Arg.Any<TextWriter>());
+            sc.Received().CreateSubscriber(Arg.Any<TextWriter>(), Arg.Any<IPublisher>());
         }
 
         [Fact]
@@ -74,19 +75,11 @@ namespace Kata5
             var publisher = Substitute.For<IPublisher>();
             var sc = Substitute.For<ISubscriberCreator>();
             var sr = new StringReader("some text");
-            var cp = new CommandProcessor(publisher, sc, sr);
+            var cp = new CommandProcessor(publisher, sc);
+            cp.TextReader = sr;
             cp.SubscribeAndReadText();
             publisher.Received().Publish("some text");
             publisher.DidNotReceive().Publish("some other text");
-        }
-
-        [Fact]
-        public void test_null_text_reader()
-        {
-            var publisher = Substitute.For<IPublisher>();
-            var sc = Substitute.For<ISubscriberCreator>();
-            Action act = () => new CommandProcessor(publisher, sc, null);
-            act.ShouldThrow<NullReferenceException>().WithMessage("Text reader should not be null");
         }
 
         [Fact]
@@ -94,7 +87,7 @@ namespace Kata5
         {
             var sc = Substitute.For<ISubscriberCreator>();
             var sr = new StringReader("some text");
-            Action act = () => new CommandProcessor(null, sc, sr);
+            Action act = () => new CommandProcessor(null, sc);
             act.ShouldThrow<NullReferenceException>().WithMessage("Publisher should not be null");
         }
 
@@ -104,7 +97,7 @@ namespace Kata5
             var publisher = Substitute.For<IPublisher>();
             var sc = Substitute.For<ISubscriberCreator>();
             var sr = new StringReader("add");
-            Action act = () => new CommandProcessor(publisher, null, sr);
+            Action act = () => new CommandProcessor(publisher, null);
             act.ShouldThrow<NullReferenceException>().WithMessage("Subscriber creator should not be null");
         }
     }
@@ -156,7 +149,7 @@ namespace Kata5
             var publisher = Substitute.For<IPublisher>();
             var sc = new SubscriberCreator(publisher);
             var sw = new StringWriter(new StringBuilder());
-            var subscriber = sc.CreateSubscriber(sw);
+            var subscriber = sc.CreateSubscriber(sw,publisher);
             subscriber.Should().BeOfType<Subscriber>();
         }
         [Fact]
